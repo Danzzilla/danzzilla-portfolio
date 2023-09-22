@@ -2,8 +2,13 @@
 
 /* Styles for navbar */
 
-#nav-wrapper{
+#nav-space{
     padding-top: 2.3rem;
+    padding-bottom: 0rem;
+}
+
+#nav-wrapper{
+    padding-top: 0rem;
 }
 
 /* Styles for home page */
