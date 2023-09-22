@@ -1,0 +1,17 @@
+{
+  "name": "danzzilla/PhotographySite",
+  "authors": [
+    {
+      "name": "Daniel Svirida",
+      "email": "danielsvirida@gmail.com"
+    }
+  ],
+  "require": {
+    "bcosca/fatfree-core": "dev-master"
+  },
+  "autoload": {
+    "classmap": [
+      "controllers/"
+    ]
+  }
+}
