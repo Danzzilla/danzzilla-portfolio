@@ -9,23 +9,39 @@
 
 #nav-wrapper{
     padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+
+.navbar-nav{
+    border-radius: 0.7rem;
+    padding: 0 0 0 1rem;
+}
+
+#logo{
+    border-radius: 1.5rem;
 }
 
 /* Styles for home page */
 
 #home-wrapper{
     background-image: url(../images/website/main.jpg);
-    background-color: #1d2124;
     background-size: cover;
     background-position: center;
     min-height: 950px;
     height: auto;
 
-    transition: background-image 0.5s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 #welcome{
-    margin-top: 9rem;
+    margin-top: 21rem;
+}
+
+#about{
+    margin-top: 55rem;
 }
 
 /* Styles for footer */
