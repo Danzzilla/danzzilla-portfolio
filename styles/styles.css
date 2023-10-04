@@ -42,9 +42,49 @@
     margin-top: 21rem;
 }
 
-/*#about{*/
-/*    margin-top: 55rem;*/
-/*}*/
+#ar1 img{
+    background-color: #a6b3ad;
+    padding: 1.5rem;
+    border-radius: 2rem;
+}
+
+#ar1 #clean-img{
+    padding: 2rem;
+}
+
+.about-underline{
+    background-color: #27513f;
+    width: 7rem;
+    height: 0.5rem;
+    border-radius: 1rem;
+
+    margin: auto;
+}
+
+#ar1 p{
+    margin-top: 1rem;
+}
+
+#ar2{
+    margin-top: 5rem;
+}
+
+#profile-img{
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+#skills{
+    list-style-type: none;
+}
+
+#skills li{
+    margin: 0.9rem;
+    background-color: #a6b3ad;
+    border-radius: 1rem;
+
+    font-weight: bold;
+}
 
 /* Styles for footer */
 
