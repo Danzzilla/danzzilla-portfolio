@@ -246,6 +246,19 @@
     background: #555;
 }
 
+#contact{
+    background-color: #01160e;
+    padding: 5rem;
+}
+
+.contact-form{
+    background-color: #dcdee0;
+}
+
+#message-input{
+    height: 15rem;
+}
+
 /* Styles for footer */
 
 footer{
