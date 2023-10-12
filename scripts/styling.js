@@ -26,8 +26,8 @@ window.addEventListener("scroll", (event) => {
 
 // screen size adjustments //
 
-const about = document.querySelector("#about");
-about.setAttribute("style", "margin-top: " + $(window).height() + "px");
+const portfolio = document.querySelector("#portfolio");
+portfolio.setAttribute("style", "margin-top: " + ($(window).height() - 134) + "px");
 
 // carousel //
 
