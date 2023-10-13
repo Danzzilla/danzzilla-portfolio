@@ -25,4 +25,24 @@ class PortfolioController
         $view = new Template();
         echo $view->render('views/home.html');
     }
+
+    function send()
+    {
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $message = $_POST['message'];
+
+        //send the email
+        $subject = "I want to Work with You!";
+        $headers = "From: $name <$email>";
+        $success = mail("danielsvirida@danzzilla.com", $subject, $message, $headers);
+
+        if($success){
+            $view = new Template();
+            echo $view->render('views/sent.html');
+        }
+        else{
+            echo "Something went wrong, please contact danielsvirida@danzzilla.com";
+        }
+    }
 }

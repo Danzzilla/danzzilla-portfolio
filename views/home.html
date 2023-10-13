@@ -77,14 +77,14 @@
 </div>
 
 <div id="contact" class="align-self-center justify-content-center text-center">
-    <form class="container text-light w-50">
+    <form class="container text-light w-50" method="post" action="https://www.danzzilla.com/send">
         <h2>Contact</h2>
-        <input id="name-input" class="form-control contact-form" name="name-input" type="text" placeholder="Name">
+        <input id="name-input" class="form-control contact-form" name="name" type="text" placeholder="Name">
 
-        <input id="email-input" class="form-control contact-form" name="email-input" type="text" placeholder="Email">
+        <input id="email-input" class="form-control contact-form" name="email" type="text" placeholder="Email">
 
-        <textarea id="message-input" class="form-control contact-form" name="message-input" type="text" placeholder="Message"></textarea>
-        <button class="btn btn-outline-success mt-2">Send</button>
+        <textarea id="message-input" class="form-control contact-form" name="message" type="text" placeholder="Message"></textarea>
+        <button id="send" class="btn btn-outline-success mt-2">Send</button>
     </form>
 </div>
 

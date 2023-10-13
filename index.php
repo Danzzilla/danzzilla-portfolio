@@ -18,5 +18,10 @@ $f3->route('GET /', function(){
     $GLOBALS['controller']->home();
 });
 
+// Email send Route
+$f3->route('POST /send', function(){
+    $GLOBALS['controller']->send();
+});
+
 //Run fat free
 $f3->run();
