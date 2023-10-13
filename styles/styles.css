@@ -49,6 +49,11 @@ a:visited{
     right: 0;
 }
 
+#jumbotron{
+    margin: auto;
+    padding-bottom: 2rem;
+}
+
 #welcome{
     margin-top: 21rem;
 }
