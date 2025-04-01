@@ -18,6 +18,11 @@ $f3->route('GET /', function(){
     $GLOBALS['controller']->home();
 });
 
+//Dev
+$f3->route('GET /', function(){
+    $GLOBALS['controller']->dev();
+});
+
 // Email send Route
 $f3->route('POST /send', function(){
     $GLOBALS['controller']->send();

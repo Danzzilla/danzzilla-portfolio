@@ -26,6 +26,12 @@ class PortfolioController
         echo $view->render('views/home.html');
     }
 
+    function dev()
+    {
+        $view = new Template();
+        echo $view->render('views/dev.html');
+    }
+
     function send()
     {
         $name = $_POST['name'];
