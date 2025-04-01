@@ -19,7 +19,7 @@ $f3->route('GET /', function(){
 });
 
 //Dev
-$f3->route('GET /', function(){
+$f3->route('GET /dev', function(){
     $GLOBALS['controller']->dev();
 });
 
