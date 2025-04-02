@@ -1,6 +1,8 @@
 /*/ Styles for Dev /*/
 html{
     background-color: #1b332e;
+    font-family: Verdana, sans-serif;
+    color: white;
 }
 
 .row{
@@ -13,4 +15,14 @@ html{
     align-items: center;
 
     width: 100%;
+}
+
+.icon{
+    width: auto;
+    height: 2rem;
+}
+
+.profile{
+    width: 15rem;
+    border-radius: 50%;
 }
