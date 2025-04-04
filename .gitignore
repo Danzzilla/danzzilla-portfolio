@@ -1,4 +1,8 @@
+.idea/
 tmp/
 vendor/
 composer.lock
+
+images/website/1.glb
+images/website/2009_mercedes-benz_sl65_amg_black_series.glb
 
