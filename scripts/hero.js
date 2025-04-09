@@ -5,13 +5,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 2;
-
-let model;
 
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 renderer.gammaOutput = true;
@@ -30,7 +26,7 @@ new RGBELoader().load(
         new GLTFLoader().load(
             `../models/garage/1.gltf`,
             async function(gltf){
-                model = gltf.scene;
+                let model = gltf.scene;
                 camera = gltf.cameras[0];
                 camera.fov = 32;
                 camera.updateProjectionMatrix();
@@ -80,5 +76,3 @@ window.addEventListener("resize", function(){
    camera.updateProjectionMatrix();
    renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
-animate();
