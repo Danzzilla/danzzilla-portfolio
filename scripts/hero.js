@@ -8,22 +8,38 @@ let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 camera.position.z = 2;
 
 let model;
-let controls;
+
+const renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
+renderer.gammaOutput = true;
+renderer.gammaFactor = 2.2;
+renderer.shadowMap.enabled = true;
+document.getElementById("canvas").appendChild(renderer.domElement);
 
 new RGBELoader().load(
     "../models/garage/symmetrical_garden_02_2k.hdr",
     function(texture){
         texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.encoding = THREE.sRGBEncoding;
         scene.environment = texture;
         scene.background = texture;
-
-        animate();
 
         new GLTFLoader().load(
             `../models/garage/1.gltf`,
             async function(gltf){
                 model = gltf.scene;
                 camera = gltf.cameras[0];
+                camera.fov = 32;
+                camera.updateProjectionMatrix();
+                model.traverse(function(node){
+                    if(node.isMesh){
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                    }
+                });
 
                 await renderer.compileAsync(model, camera, scene);
                 scene.add(model);
@@ -40,16 +56,18 @@ new RGBELoader().load(
     }
 );
 
-const renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
-document.getElementById("canvas").appendChild(renderer.domElement);
-
-const sun = new THREE.DirectionalLight(0xfff2e5, 1);
-sun.position.set(10, 10, 10)
+const sun = new THREE.DirectionalLight(0xfff2e5, 10);
+sun.position.set(5, 35, 8)
 sun.castShadow = true;
+sun.shadow.camera.top += 25;
+sun.shadow.camera.bottom -= 25;
+sun.shadow.camera.right += 25;
+sun.shadow.camera.left -= 25;
+sun.shadow.camera.near = 25;
+sun.shadow.camera.far = 150;
+sun.shadow.bias = -0.003;
+sun.shadow.mapSize.width = 4096;
+sun.shadow.mapSize.height = 4096;
 scene.add(sun);
 
 function animate(){
