@@ -1,15 +1,17 @@
 import * as THREE from "three";
+import Stats from 'three/addons/libs/stats.module.js';
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+import { SSAOPass } from "three/addons/postprocessing/SSAOPass.js";
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-let bokeh, camera;
+let bokeh, camera, ssaoPass, stats;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -50,14 +52,20 @@ new RGBELoader().load(
                 camera.fov = 32;
 
                 composer.addPass(new RenderPass(scene, camera));
+                ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+                composer.addPass(ssaoPass);
                 bokeh = new BokehPass(scene, camera,{
-                    focus: 1.0,
-                    aperture: 0.025,
+                    focus: 31,
+                    aperture: 6.1,
                     maxblur: 0.01
                 });
                 composer.addPass(bokeh);
                 composer.addPass(new SMAAPass());
                 composer.addPass(new OutputPass());
+
+                stats = new Stats();
+                stats.showPanel(0);
+                document.getElementById("canvas").appendChild( stats.dom );
 
                 const gui = new GUI();
                 gui.add( effectController, 'focus', 0, 100, 1 ).onChange( matChanger );
@@ -66,6 +74,22 @@ new RGBELoader().load(
                 gui.close();
 
                 matChanger();
+
+                gui.add( ssaoPass, 'output', {
+                    'Default': SSAOPass.OUTPUT.Default,
+                    'SSAO Only': SSAOPass.OUTPUT.SSAO,
+                    'SSAO Only + Blur': SSAOPass.OUTPUT.Blur,
+                    'Depth': SSAOPass.OUTPUT.Depth,
+                    'Normal': SSAOPass.OUTPUT.Normal
+                } ).onChange( function ( value ) {
+
+                    ssaoPass.output = value;
+
+                } );
+                gui.add( ssaoPass, 'kernelRadius' ).min( 0 ).max( 32 );
+                gui.add( ssaoPass, 'minDistance' ).min( 0.001 ).max( 0.02 );
+                gui.add( ssaoPass, 'maxDistance' ).min( 0.01 ).max( 0.3 );
+                gui.add( ssaoPass, 'enabled' );
 
                 await renderer.compileAsync(model, camera, scene);
                 scene.add(model);
@@ -96,18 +120,20 @@ sun.shadow.mapSize.height = 4096;
 scene.add(sun);
 
 function animate(){
+    stats.begin();
     let time = Date.now() * 0.005;
     sun.position.y = Math.sin(time * 0.07) * 35;
     sun.position.z = Math.sin(time * 0.07) * 35;
 
     requestAnimationFrame(animate);
     composer.render();
+    stats.end();
 }
 
 const effectController = {
 
-    focus: 10,
-    aperture: 5,
+    focus: 31,
+    aperture: 6.1,
     maxblur: 0.01
 
 };
