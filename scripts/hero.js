@@ -11,7 +11,7 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-let bokeh, camera, ssaoPass, stats;
+let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -29,7 +29,7 @@ document.getElementById("canvas").appendChild(renderer.domElement);
 const composer = new EffectComposer(renderer);
 
 new RGBELoader().load(
-    "../models/garage/blocky_photo_studio_2k.hdr",
+    "../models/garage/zwartkops_straight_afternoon_2k.hdr",
     function(texture){
         texture.mapping = THREE.EquirectangularReflectionMapping;
         texture.encoding = THREE.sRGBEncoding;
@@ -55,7 +55,7 @@ new RGBELoader().load(
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
                 composer.addPass(ssaoPass);
                 bokeh = new BokehPass(scene, camera,{
-                    focus: 31,
+                    focus: 24,
                     aperture: 6.1,
                     maxblur: 0.01
                 });
@@ -91,6 +91,46 @@ new RGBELoader().load(
                 gui.add( ssaoPass, 'maxDistance' ).min( 0.01 ).max( 0.3 );
                 gui.add( ssaoPass, 'enabled' );
 
+                sun = new THREE.DirectionalLight(0xffffff, 10);
+                sun.position.set(-3, 60, -9.2);
+                const car = new THREE.Object3D();
+                car.position.set(-9.2, -1.28, -9.2);
+                sun.target = car;
+                sun.castShadow = true;
+                sun.shadow.camera.top += 25;
+                sun.shadow.camera.bottom -= 25;
+                sun.shadow.camera.right += 25;
+                sun.shadow.camera.left -= 25;
+                sun.shadow.camera.near = 25;
+                sun.shadow.camera.far = 150;
+                sun.shadow.mapSize.width = 4096;
+                sun.shadow.mapSize.height = 4096;
+                scene.add(sun);
+                helper = new THREE.DirectionalLightHelper(sun);
+                scene.add(sun, helper);
+                camhelper = new THREE.CameraHelper(sun.shadow.camera);
+                scene.add(camhelper);
+
+                const lightPosition = {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                };
+
+                const lightFolder = gui.addFolder('Directional Light');
+                lightFolder.add(lightPosition, 'x', -60, 60).name('Position X').onChange(() => {
+                    sun.position.x = lightPosition.x;
+                });
+                lightFolder.add(lightPosition, 'y', -60, 60).name('Position Y').onChange(() => {
+                    sun.position.y = lightPosition.y;
+                });
+                lightFolder.add(lightPosition, 'z', -60, 60).name('Position Z').onChange(() => {
+                    sun.position.z = lightPosition.z;
+                });
+                lightFolder.open();
+
+                // controls = new OrbitControls(camera, renderer.domElement);
+
                 await renderer.compileAsync(model, camera, scene);
                 scene.add(model);
 
@@ -106,33 +146,23 @@ new RGBELoader().load(
     }
 );
 
-const sun = new THREE.DirectionalLight(0xfff2e5, 5);
-sun.position.set(5, 35, 8);
-sun.castShadow = true;
-sun.shadow.camera.top += 25;
-sun.shadow.camera.bottom -= 25;
-sun.shadow.camera.right += 25;
-sun.shadow.camera.left -= 25;
-sun.shadow.camera.near = 25;
-sun.shadow.camera.far = 150;
-sun.shadow.mapSize.width = 4096;
-sun.shadow.mapSize.height = 4096;
-scene.add(sun);
-
 function animate(){
     stats.begin();
     let time = Date.now() * 0.005;
-    sun.position.y = Math.sin(time * 0.07) * 35;
-    sun.position.z = Math.sin(time * 0.07) * 35;
+    sun.position.y = Math.cos(time * 0.007) * 60;
+    sun.position.z = Math.sin(time * 0.007) * 60;
 
     requestAnimationFrame(animate);
+    helper.parent.updateMatrixWorld();
+    helper.update();
+    // controls.update();
     composer.render();
     stats.end();
 }
 
 const effectController = {
 
-    focus: 31,
+    focus: 24,
     aperture: 6.1,
     maxblur: 0.01
 
@@ -150,4 +180,5 @@ window.addEventListener("resize", function(){
    camera.aspect = window.innerWidth / window.innerHeight;
    camera.updateProjectionMatrix();
    renderer.setSize(window.innerWidth, window.innerHeight);
+   // controls.update();
 });
