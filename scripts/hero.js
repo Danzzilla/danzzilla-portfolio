@@ -91,7 +91,7 @@ new RGBELoader().load(
                 gui.add( ssaoPass, 'maxDistance' ).min( 0.01 ).max( 0.3 );
                 gui.add( ssaoPass, 'enabled' );
 
-                sun = new THREE.DirectionalLight(0xffffff, 10);
+                sun = new THREE.DirectionalLight(0xffffff, 35);
                 sun.position.set(-3, 60, -9.2);
                 const car = new THREE.Object3D();
                 car.position.set(-9.2, -1.28, -9.2);
@@ -101,10 +101,11 @@ new RGBELoader().load(
                 sun.shadow.camera.bottom -= 25;
                 sun.shadow.camera.right += 25;
                 sun.shadow.camera.left -= 25;
-                sun.shadow.camera.near = 25;
-                sun.shadow.camera.far = 150;
-                sun.shadow.mapSize.width = 4096;
-                sun.shadow.mapSize.height = 4096;
+                sun.shadow.camera.near = 20;
+                sun.shadow.camera.far = 100;
+                sun.shadow.mapSize.width = 8096;
+                sun.shadow.mapSize.height = 8096;
+                sun.shadow.bias = -0.002;
                 scene.add(sun);
                 helper = new THREE.DirectionalLightHelper(sun);
                 scene.add(sun, helper);
