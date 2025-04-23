@@ -53,6 +53,9 @@ new RGBELoader().load(
 
                 composer.addPass(new RenderPass(scene, camera));
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+                ssaoPass.kernelRadius = 6.8;
+                ssaoPass.minDistance = 0.001;
+                ssaoPass.maxDistance = 0.3;
                 composer.addPass(ssaoPass);
                 bokeh = new BokehPass(scene, camera,{
                     focus: 24,
