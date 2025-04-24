@@ -29,7 +29,7 @@ document.getElementById("canvas").appendChild(renderer.domElement);
 const composer = new EffectComposer(renderer);
 
 new RGBELoader().load(
-    "../models/garage/zwartkops_straight_afternoon_2k.hdr",
+    "../models/garage/horn-koppe_snow_2k.hdr",
     function(texture){
         texture.mapping = THREE.EquirectangularReflectionMapping;
         texture.encoding = THREE.sRGBEncoding;
@@ -53,7 +53,7 @@ new RGBELoader().load(
 
                 composer.addPass(new RenderPass(scene, camera));
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-                ssaoPass.kernelRadius = 6.8;
+                ssaoPass.kernelRadius = 12.3;
                 ssaoPass.minDistance = 0.001;
                 ssaoPass.maxDistance = 0.3;
                 composer.addPass(ssaoPass);
