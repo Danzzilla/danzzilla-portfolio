@@ -53,7 +53,7 @@ new RGBELoader().load(
 
                 composer.addPass(new RenderPass(scene, camera));
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-                ssaoPass.kernelRadius = 12.3;
+                ssaoPass.kernelRadius = 16.3;
                 ssaoPass.minDistance = 0.001;
                 ssaoPass.maxDistance = 0.3;
                 composer.addPass(ssaoPass);
@@ -71,6 +71,22 @@ new RGBELoader().load(
                 document.getElementById("canvas").appendChild( stats.dom );
 
                 const gui = new GUI();
+
+                gui.add(dim, 'dark').onChange(function(){
+                    // materials.forEach(function(material) {
+                        console.log("dark");
+                        renderer.toneMappingExposure = 0.2;
+                    // });
+                    renderer.render(scene, camera);
+                });
+                gui.add(dim, 'bright').onChange(function(){
+                    // materials.forEach(function(material) {
+                        console.log("bright");
+                        renderer.toneMappingExposure = 0.5;
+                    // });
+                    renderer.render(scene, camera);
+                });
+
                 gui.add( effectController, 'focus', 0, 100, 1 ).onChange( matChanger );
                 gui.add( effectController, 'aperture', 0, 10, 0.1 ).onChange( matChanger );
                 gui.add( effectController, 'maxblur', 0.0, 0.01, 0.001 ).onChange( matChanger );
@@ -172,6 +188,11 @@ const effectController = {
 
 };
 
+const dim = {
+  dark: false,
+  bright: false
+};
+
 const matChanger = function ( ) {
 
     bokeh.uniforms[ 'focus' ].value = effectController.focus;
@@ -185,4 +206,18 @@ window.addEventListener("resize", function(){
    camera.updateProjectionMatrix();
    renderer.setSize(window.innerWidth, window.innerHeight);
    // controls.update();
+});
+
+document.getElementById("darkmode-toggle").addEventListener('change', function(){
+    if(this.checked){
+        renderer.toneMappingExposure = 0.15;
+        //disable time change
+        //change sun intensity
+        //change shop light intensity
+    }else{
+        renderer.toneMappingExposure = 0.5;
+        //disable time change
+        //change sun position and intensity
+        //change shop light intensity
+    }
 });
