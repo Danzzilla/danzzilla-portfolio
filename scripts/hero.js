@@ -49,7 +49,9 @@ new RGBELoader().load(
 
                 let cameras = gltf.cameras;
                 camera = cameras[0];
+                camera.aspect = window.innerWidth / window.innerHeight;
                 camera.fov = 32;
+                camera.updateProjectionMatrix();
 
                 composer.addPass(new RenderPass(scene, camera));
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
