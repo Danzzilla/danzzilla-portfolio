@@ -11,7 +11,7 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight;
+let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight, orangeLight;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -141,6 +141,14 @@ new RGBELoader().load(
                 blueLight.shadow.bias = -0.001
                 scene.add(blueLight);
 
+                orangeLight = new THREE.PointLight(0xFF952D, 15000);
+                orangeLight.position.set(-13, 3, -28.3);
+                orangeLight.castShadow = true;
+                orangeLight.shadow.mapSize.width = 4096;
+                orangeLight.shadow.mapSize.height = 4096;
+                orangeLight.shadow.bias = -0.001
+                scene.add(orangeLight);
+
                 const lightPosition = {
                     x: 0,
                     y: 0,
@@ -149,13 +157,13 @@ new RGBELoader().load(
 
                 const lightFolder = gui.addFolder('Directional Light');
                 lightFolder.add(lightPosition, 'x', -60, 60).name('Position X').onChange(() => {
-                    blueLight.position.x = lightPosition.x;
+                    orangeLight.position.x = lightPosition.x;
                 });
                 lightFolder.add(lightPosition, 'y', -60, 60).name('Position Y').onChange(() => {
-                    blueLight.position.y = lightPosition.y;
+                    orangeLight.position.y = lightPosition.y;
                 });
                 lightFolder.add(lightPosition, 'z', -60, 60).name('Position Z').onChange(() => {
-                    blueLight.position.z = lightPosition.z;
+                    orangeLight.position.z = lightPosition.z;
                 });
                 lightFolder.open();
 
@@ -223,12 +231,14 @@ document.getElementById("darkmode-toggle").addEventListener('change', function()
         renderer.toneMappingExposure = 0.05;
         //disable time change
         sun.intensity = 0;
-        blueLight.intensity = 15000;
+        // blueLight.intensity = 15000;
+        orangeLight.intensity = 15000;
     }else{
         renderer.toneMappingExposure = 0.5;
         //disable time change
         sun.intensity = 35;
         //change sun position
         blueLight.intensity = 0;
+        orangeLight.intensity = 0;
     }
 });
