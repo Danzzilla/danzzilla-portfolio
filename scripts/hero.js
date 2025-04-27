@@ -139,7 +139,6 @@ new RGBELoader().load(
                 blueLight.shadow.mapSize.width = 4096;
                 blueLight.shadow.mapSize.height = 4096;
                 blueLight.shadow.bias = -0.001
-                scene.add(blueLight);
 
                 orangeLight = new THREE.PointLight(0xFF952D, 15000);
                 orangeLight.position.set(-13, 3, -28.3);
@@ -147,7 +146,6 @@ new RGBELoader().load(
                 orangeLight.shadow.mapSize.width = 4096;
                 orangeLight.shadow.mapSize.height = 4096;
                 orangeLight.shadow.bias = -0.001
-                scene.add(orangeLight);
 
                 const lightPosition = {
                     x: 0,
@@ -230,15 +228,15 @@ document.getElementById("darkmode-toggle").addEventListener('change', function()
     if(this.checked){
         renderer.toneMappingExposure = 0.05;
         //disable time change
-        sun.intensity = 0;
-        // blueLight.intensity = 15000;
-        orangeLight.intensity = 15000;
+        scene.remove(sun);
+        scene.add(orangeLight);
+        scene.add(blueLight);
     }else{
         renderer.toneMappingExposure = 0.5;
         //disable time change
-        sun.intensity = 35;
+        scene.add(sun);
         //change sun position
-        blueLight.intensity = 0;
-        orangeLight.intensity = 0;
+        scene.remove(orangeLight);
+        scene.remove(blueLight);
     }
 });
