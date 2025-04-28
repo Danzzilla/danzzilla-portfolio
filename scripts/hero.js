@@ -13,7 +13,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight,
     orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength,
-time;
+    time, date;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -29,6 +29,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.getElementById("canvas").appendChild(renderer.domElement);
 
 const composer = new EffectComposer(renderer);
+collectSunData();
 
 new RGBELoader().load(
     "../models/garage/horn-koppe_snow_2k.hdr",
@@ -176,30 +177,48 @@ new RGBELoader().load(
     }
 );
 
-fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_format=24")
-    .then(response => response.json())
-    .then(data => {
-        let sunIO = data['results'];
-        firstLight = new Date(sunIO['date'] + "T" + sunIO['first_light']).getTime();
-        sunrise = new Date(sunIO['date'] + "T" + sunIO['sunrise']).getTime();
-        lastLight = new Date(sunIO['date'] + "T" + sunIO['last_light']).getTime();
-        sunset = new Date(sunIO['date'] + "T" + sunIO['sunset']).getTime();
-        daytime = sunset - sunrise;
-        dawnlength = sunrise - firstLight;
-        dusklength = lastLight - sunset;
-        console.log(data);
-        console.log(firstLight);
-        console.log(sunrise);
-        console.log(lastLight);
-        console.log(sunset);
-        console.log(daytime);
-        console.log(dawnlength);
-        console.log(dusklength);
-    })
-    .catch(error => console.error('Error:', error));
+function collectSunData() {
+    fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_format=24")
+        .then(response => response.json())
+        .then(data => {
+            let sunIO = data['results'];
+            firstLight = new Date(sunIO['date'] + "T" + sunIO['first_light']).getTime();
+            sunrise = new Date(sunIO['date'] + "T" + sunIO['sunrise']).getTime();
+            lastLight = new Date(sunIO['date'] + "T" + sunIO['last_light']).getTime();
+            sunset = new Date(sunIO['date'] + "T" + sunIO['sunset']).getTime();
+            date = new Date(sunIO['date'])
+            daytime = sunset - sunrise;
+            dawnlength = sunrise - firstLight;
+            dusklength = lastLight - sunset;
+            console.log(data);
+            console.log(date);
+            console.log(firstLight);
+            console.log(sunrise);
+            console.log(lastLight);
+            console.log(sunset);
+            console.log(daytime);
+            console.log(dawnlength);
+            console.log(dusklength);
+        })
+        .catch(error => console.error('Error:', error));
+}
 
 function sunController(){
     time = Date.now();
+
+    if(time % 3600000 === 0){
+        let actualDate;
+        fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_format=24")
+            .then(response => response.json())
+            .then(data => {
+                actualDate = new Date(data['results']['date']);
+            })
+            .catch(error => console.error('Error:', error));
+
+        if(date !== actualDate){
+            collectSunData();
+        }
+    }
 
 
     if(firstLight < time && time < sunrise){
