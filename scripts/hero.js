@@ -128,9 +128,8 @@ new RGBELoader().load(
                 sun.shadow.mapSize.width = 8096;
                 sun.shadow.mapSize.height = 8096;
                 sun.shadow.bias = -0.002;
-                scene.add(sun);
                 helper = new THREE.DirectionalLightHelper(sun);
-                scene.add(sun, helper);
+                scene.add(helper);
                 camhelper = new THREE.CameraHelper(sun.shadow.camera);
                 scene.add(camhelper);
 
@@ -199,8 +198,36 @@ fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_form
 
 function sunController(){
     let time = Date.now();
-    sun.position.y = Math.cos((time - sunrise) / (daytime/Math.PI)) * 60;
-    sun.position.z = Math.sin((time - sunrise) / (daytime/Math.PI)) * 60;
+
+
+    if(firstLight < time && time < sunrise){
+        //dawn controls
+        scene.remove(blueLight);
+        scene.remove(sun); 
+        scene.add(orangeLight);
+        orangeLight.intensity = 15000 - (((time - firstLight)/dawnlength) * 15000);
+        renderer.toneMappingExposure = 0.05 + (((time - firstLight)/dawnlength) * 0.45);
+    }else if(sunrise < time && time < sunset) {
+        //day controls
+        scene.remove(blueLight);
+        scene.remove(orangeLight);
+        scene.add(sun);
+        renderer.toneMappingExposure = 0.5;
+        sun.position.y = Math.cos((time - sunrise) / (daytime / Math.PI)) * 60;
+        sun.position.z = Math.sin((time - sunrise) / (daytime / Math.PI)) * 60;
+    }else if(sunset < time && time < lastLight){
+        //dusk controls
+        scene.remove(sun);
+        scene.remove(orangeLight);
+        scene.add(blueLight);
+        blueLight.intensity = ((time - sunset)/dusklength) * 15000;
+        renderer.toneMappingExposure = 0.5 - (((time - sunset)/dusklength) * 0.45);
+    }else{
+        scene.remove(sun);
+        scene.remove(orangeLight);
+        scene.add(blueLight);
+        renderer.toneMappingExposure = 0.05;
+    }
 }
 
 function animate(){
