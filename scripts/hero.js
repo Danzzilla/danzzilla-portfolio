@@ -12,7 +12,8 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight,
-    orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength;
+    orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength,
+time;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -75,20 +76,10 @@ new RGBELoader().load(
 
                 const gui = new GUI();
 
-                gui.add(dim, 'dark').onChange(function(){
-                    // materials.forEach(function(material) {
-                        console.log("dark");
-                        renderer.toneMappingExposure = 0.2;
-                    // });
-                    renderer.render(scene, camera);
-                });
-                gui.add(dim, 'bright').onChange(function(){
-                    // materials.forEach(function(material) {
-                        console.log("bright");
-                        renderer.toneMappingExposure = 0.5;
-                    // });
-                    renderer.render(scene, camera);
-                });
+                // gui.add(timeset, 'time').min(1745820573000).max(1745914179000)
+                //     .onChange(function(value){
+                //         time = value;
+                //     });
 
                 gui.add( effectController, 'focus', 0, 100, 1 ).onChange( matChanger );
                 gui.add( effectController, 'aperture', 0, 10, 0.1 ).onChange( matChanger );
@@ -170,6 +161,9 @@ new RGBELoader().load(
                 await renderer.compileAsync(model, camera, scene);
                 scene.add(model);
 
+                const axesHelper = new THREE.AxesHelper(60);
+                scene.add( axesHelper );
+
                 animate();
             },
             function(xhr){
@@ -193,17 +187,25 @@ fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_form
         daytime = sunset - sunrise;
         dawnlength = sunrise - firstLight;
         dusklength = lastLight - sunset;
+        console.log(data);
+        console.log(firstLight);
+        console.log(sunrise);
+        console.log(lastLight);
+        console.log(sunset);
+        console.log(daytime);
+        console.log(dawnlength);
+        console.log(dusklength);
     })
     .catch(error => console.error('Error:', error));
 
 function sunController(){
-    let time = Date.now();
+    time = Date.now();
 
 
     if(firstLight < time && time < sunrise){
         //dawn controls
         scene.remove(blueLight);
-        scene.remove(sun); 
+        scene.remove(sun);
         scene.add(orangeLight);
         orangeLight.intensity = 15000 - (((time - firstLight)/dawnlength) * 15000);
         renderer.toneMappingExposure = 0.05 + (((time - firstLight)/dawnlength) * 0.45);
@@ -211,10 +213,10 @@ function sunController(){
         //day controls
         scene.remove(blueLight);
         scene.remove(orangeLight);
-        scene.add(sun);
         renderer.toneMappingExposure = 0.5;
-        sun.position.y = Math.cos((time - sunrise) / (daytime / Math.PI)) * 60;
-        sun.position.z = Math.sin((time - sunrise) / (daytime / Math.PI)) * 60;
+        sun.position.z = -Math.cos((time - sunrise) / (daytime / Math.PI)) * 60;
+        sun.position.y = Math.sin((time - sunrise) / (daytime / Math.PI)) * 60;
+        scene.add(sun);
     }else if(sunset < time && time < lastLight){
         //dusk controls
         scene.remove(sun);
@@ -226,6 +228,7 @@ function sunController(){
         scene.remove(sun);
         scene.remove(orangeLight);
         scene.add(blueLight);
+        blueLight.intensity = 15000;
         renderer.toneMappingExposure = 0.05;
     }
 }
@@ -250,9 +253,8 @@ const effectController = {
 
 };
 
-const dim = {
-  dark: false,
-  bright: false
+const timeset = {
+    time: 1745837573000
 };
 
 const matChanger = function ( ) {
