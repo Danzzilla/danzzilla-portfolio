@@ -11,7 +11,8 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight, orangeLight;
+let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight,
+    orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -182,12 +183,30 @@ new RGBELoader().load(
     }
 );
 
+fetch("https://api.sunrisesunset.io/json?lat=47.606209&lng=-122.332069&time_format=24")
+    .then(response => response.json())
+    .then(data => {
+        let sunIO = data['results'];
+        firstLight = new Date(sunIO['date'] + "T" + sunIO['first_light']).getTime();
+        sunrise = new Date(sunIO['date'] + "T" + sunIO['sunrise']).getTime();
+        lastLight = new Date(sunIO['date'] + "T" + sunIO['last_light']).getTime();
+        sunset = new Date(sunIO['date'] + "T" + sunIO['sunset']).getTime();
+        daytime = sunset - sunrise;
+        dawnlength = sunrise - firstLight;
+        dusklength = lastLight - sunset;
+    })
+    .catch(error => console.error('Error:', error));
+
+function sunController(){
+    let time = Date.now();
+    sun.position.y = Math.cos((time - sunrise) / (daytime/Math.PI)) * 60;
+    sun.position.z = Math.sin((time - sunrise) / (daytime/Math.PI)) * 60;
+}
+
 function animate(){
     stats.begin();
-    let time = Date.now() * 0.005;
-    sun.position.y = Math.cos(time * 0.007) * 60;
-    sun.position.z = Math.sin(time * 0.007) * 60;
 
+    sunController();
     requestAnimationFrame(animate);
     helper.parent.updateMatrixWorld();
     helper.update();
