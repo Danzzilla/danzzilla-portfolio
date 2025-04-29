@@ -13,7 +13,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight,
     orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength,
-    time, date;
+    date, time, dateString, autosun = true, dark;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -77,10 +77,10 @@ new RGBELoader().load(
 
                 const gui = new GUI();
 
-                // gui.add(timeset, 'time').min(1745820573000).max(1745914179000)
-                //     .onChange(function(value){
-                //         time = value;
-                //     });
+                gui.add(timeset, 'time').min(1745820573000).max(1745914179000)
+                    .onChange(function(value){
+                        time = value;
+                    });
 
                 gui.add( effectController, 'focus', 0, 100, 1 ).onChange( matChanger );
                 gui.add( effectController, 'aperture', 0, 10, 0.1 ).onChange( matChanger );
@@ -191,7 +191,7 @@ function collectSunData() {
             dawnlength = sunrise - firstLight;
             dusklength = lastLight - sunset;
             console.log(data);
-            console.log(date);
+            console.log(dateString);
             console.log(firstLight);
             console.log(sunrise);
             console.log(lastLight);
@@ -199,6 +199,8 @@ function collectSunData() {
             console.log(daytime);
             console.log(dawnlength);
             console.log(dusklength);
+            console.log(dateString + "T" + sunIO['first_light']);
+            console.log(new Date("2025-4-28T03:52:53"));
         })
         .catch(error => console.error('Error:', error));
 }
@@ -220,7 +222,6 @@ function sunController(){
         }
     }
 
-
     if(firstLight < time && time < sunrise){
         //dawn controls
         scene.remove(blueLight);
@@ -228,6 +229,7 @@ function sunController(){
         scene.add(orangeLight);
         orangeLight.intensity = 15000 - (((time - firstLight)/dawnlength) * 15000);
         renderer.toneMappingExposure = 0.05 + (((time - firstLight)/dawnlength) * 0.45);
+        darkToggle.checked = false;
     }else if(sunrise < time && time < sunset) {
         //day controls
         scene.remove(blueLight);
@@ -236,6 +238,7 @@ function sunController(){
         sun.position.z = -Math.cos((time - sunrise) / (daytime / Math.PI)) * 60;
         sun.position.y = Math.sin((time - sunrise) / (daytime / Math.PI)) * 60;
         scene.add(sun);
+        darkToggle.checked = false;
     }else if(sunset < time && time < lastLight){
         //dusk controls
         scene.remove(sun);
@@ -243,19 +246,24 @@ function sunController(){
         scene.add(blueLight);
         blueLight.intensity = ((time - sunset)/dusklength) * 15000;
         renderer.toneMappingExposure = 0.5 - (((time - sunset)/dusklength) * 0.45);
+        darkToggle.checked = false;
     }else{
         scene.remove(sun);
         scene.remove(orangeLight);
         scene.add(blueLight);
         blueLight.intensity = 15000;
         renderer.toneMappingExposure = 0.05;
+        darkToggle.checked = true;
     }
 }
 
 function animate(){
     stats.begin();
 
-    sunController();
+    if(autosun){
+        console.log("on");
+        sunController();
+    }
     requestAnimationFrame(animate);
     helper.parent.updateMatrixWorld();
     helper.update();
@@ -291,19 +299,33 @@ window.addEventListener("resize", function(){
    // controls.update();
 });
 
-document.getElementById("darkmode-toggle").addEventListener('change', function(){
+let darkToggle = document.getElementById("darkmode-toggle");
+darkToggle.addEventListener('change', function(){
     if(this.checked){
+        //turn off auto sun
+        autoToggle.checked = true;
+        autosun = false;
         renderer.toneMappingExposure = 0.05;
-        //disable time change
         scene.remove(sun);
         scene.add(orangeLight);
         scene.add(blueLight);
     }else{
+        //turn off auto sun
+        autoToggle.checked = true;
+        autosun = false;
         renderer.toneMappingExposure = 0.5;
-        //disable time change
         scene.add(sun);
-        //change sun position
+        sun.position.set(-3, 60, -9.2);
         scene.remove(orangeLight);
         scene.remove(blueLight);
+    }
+});
+
+let autoToggle = document.getElementById("auto-toggle");
+autoToggle.addEventListener('change', function(){
+    if(this.checked){
+        autosun = false;
+    }else{
+        autosun = true;
     }
 });

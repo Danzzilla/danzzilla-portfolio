@@ -61,7 +61,7 @@ html{
     width: 0;
     height: 0;
     visibility: hidden;
-
+    display: none;
 }
 
 #darkmode-toggle:checked + label[for=darkmode-toggle]{
@@ -94,6 +94,49 @@ label[for=darkmode-toggle]:after{
     top: 2px;
     left: 2px;
     background: linear-gradient(180deg, #ffcc89, #d8860b);
+    border-radius: 16px;
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+#auto-toggle{
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: none;
+}
+
+#auto-toggle:checked + label[for=auto-toggle]{
+    background: linear-gradient(180deg, #c7c7c7, #8a8a8a);
+}
+
+#auto-toggle:checked + label[for=auto-toggle]:after{
+    left: 39px;
+    transform: translateX(-100%);
+    background: linear-gradient(180deg, #777, #3a3a3a);
+}
+
+label[for=auto-toggle]{
+    margin-top: 5px;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    display: block;
+    background: linear-gradient(180deg, #c7c7c7, #8a8a8a);
+    border-radius: 20px;
+    box-shadow: inset 0px 1px 2px rgba(0,0,0,0.4), inset 0px -1px  2px rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+label[for=auto-toggle]:after{
+    content: "";
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: linear-gradient(180deg, #ffffff, #bebebe);
     border-radius: 16px;
     box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
     transition: 0.3s;
