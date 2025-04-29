@@ -13,7 +13,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let bokeh, camera, ssaoPass, stats, controls, sun, helper, camhelper, blueLight,
     orangeLight, firstLight, sunrise, daytime, sunset, lastLight, dawnlength, dusklength,
-    date, time, dateString, autosun = true, dark;
+    date, time, dateString, autosun = true;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -182,11 +182,11 @@ function collectSunData() {
         .then(response => response.json())
         .then(data => {
             let sunIO = data['results'];
-            firstLight = new Date(sunIO['date'] + "T" + sunIO['first_light']).getTime();
-            sunrise = new Date(sunIO['date'] + "T" + sunIO['sunrise']).getTime();
-            lastLight = new Date(sunIO['date'] + "T" + sunIO['last_light']).getTime();
-            sunset = new Date(sunIO['date'] + "T" + sunIO['sunset']).getTime();
-            date = new Date(sunIO['date'])
+            dateString = new Date(sunIO['date']).toISOString().split("T")[0];
+            firstLight = new Date(dateString + "T" + sunIO['first_light']);
+            sunrise = new Date(dateString + "T" + sunIO['sunrise']).getTime();
+            lastLight = new Date(dateString + "T" + sunIO['last_light']).getTime();
+            sunset = new Date(dateString + "T" + sunIO['sunset']).getTime();
             daytime = sunset - sunrise;
             dawnlength = sunrise - firstLight;
             dusklength = lastLight - sunset;
