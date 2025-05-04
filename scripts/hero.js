@@ -81,6 +81,9 @@ new RGBELoader().load(
                 //Render Pass
                 composer.addPass(new RenderPass(scene, camera));
 
+                //AA Pass
+                composer.addPass(new SMAAPass());
+
                 //AO Pass
                 ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
                 ssaoPass.kernelRadius = 16.3;
@@ -96,9 +99,6 @@ new RGBELoader().load(
                 });
                 composer.addPass(bokeh);
 
-                //AA Pass
-                composer.addPass(new SMAAPass());
-
                 //Output Pass
                 composer.addPass(new OutputPass());
 
@@ -107,8 +107,13 @@ new RGBELoader().load(
                 animate();
             },
             function(xhr){
-                //Loading Progress
-                console.log((xhr.loaded / (xhr.total * 100)) + "% Loaded");
+                if (xhr.lengthComputable) {
+                    const percentComplete = (xhr.loaded / xhr.total) * 100;
+                    console.log(percentComplete.toFixed(2) + "% Loaded");
+                } else {
+                    console.log("Loading... " + xhr.loaded + " bytes loaded");
+                }
+                console.log(xhr);
             },
             function(error){
                 //Errors
@@ -119,14 +124,10 @@ new RGBELoader().load(
 );
 
 function initializeObjects(){
-    //orbit target
-    const car = new THREE.Object3D();
-    car.position.set(-9.2, -1.28, -9.2);
-
     //sun
     sun = new THREE.DirectionalLight(0xffffff, 35);
-    sun.position.set(-3, 60, -9.2);
-    sun.target = car;
+    sun.position.set(6.5, 60, 0);
+    sun.target.position.set(-9.2, -1.28, -9.2)
     sun.castShadow = true;
     sun.shadow.camera.top += 30;
     sun.shadow.camera.bottom -= 30;
@@ -254,7 +255,7 @@ darkToggle.addEventListener('change', function(){
         autosun = false;
         renderer.toneMappingExposure = 0.5;
         scene.add(sun);
-        sun.position.set(-3, 60, -9.2);
+        sun.position.set(6.5, 60, 0);
         scene.remove(orangeLight);
         scene.remove(blueLight);
     }
