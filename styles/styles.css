@@ -2,17 +2,18 @@
 html{
     background-color: #1b332e;
     font-family: Verdana, sans-serif;
-    color: white;
+    color: #222222;
 }
 
 #canvas {
     width: 100vw;
     height: 100vh;
     display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
     z-index: -9999;
+}
+
+#body{
+    background-color: white;
 }
 
 .row{
@@ -20,6 +21,9 @@ html{
 }
 
 .nav{
+    position: fixed;
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -36,7 +40,7 @@ html{
 }
 
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.7);
 }
 
 .card img{
