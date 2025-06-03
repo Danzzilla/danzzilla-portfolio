@@ -1,19 +1,14 @@
 /*/ Styles for Dev /*/
 html{
-    background-color: #1b332e;
+    background: #d1d1d1;
+    background: linear-gradient(100deg, rgba(209, 209, 209, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(209, 209, 209, 1) 100%);
     font-family: Verdana, sans-serif;
     color: #222222;
 }
 
 #canvas {
-    width: 100vw;
-    height: 100vh;
     display: block;
-    z-index: -9999;
-}
-
-#body{
-    background-color: white;
+    z-index: -1;
 }
 
 .row{
