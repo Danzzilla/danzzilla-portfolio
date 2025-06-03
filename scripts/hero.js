@@ -28,7 +28,7 @@ const scene = new THREE.Scene();
 
 //Renderer
 renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(document.documentElement.clientWidth, document.documentElement.clientHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.outputMapping = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.CineonToneMapping;
@@ -65,7 +65,7 @@ new RGBELoader().load(
                 //Set Camera from Model
                 let cameras = gltf.cameras;
                 camera = cameras[0];
-                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.aspect = document.documentElement.clientWidth / document.documentElement.clientHeight;
                 camera.fov = 32;
                 camera.updateProjectionMatrix();
 
@@ -85,7 +85,7 @@ new RGBELoader().load(
                 composer.addPass(new SMAAPass());
 
                 //AO Pass
-                ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+                ssaoPass = new SSAOPass(scene, camera, document.documentElement.clientWidth, document.documentElement.clientHeight);
                 ssaoPass.kernelRadius = 16.3;
                 ssaoPass.minDistance = 0.001;
                 ssaoPass.maxDistance = 0.3;
