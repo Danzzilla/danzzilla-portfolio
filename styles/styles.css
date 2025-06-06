@@ -10,6 +10,20 @@ body{
     margin: 0;
 }
 
+@media screen and (min-width: 760px) and (max-width: 1200px){
+    section{
+        margin-right: 150px;
+        margin-left: 150px;
+    }
+}
+
+@media screen and (min-width: 1200px){
+    section{
+        margin-right: 250px;
+        margin-left: 250px;
+    }
+}
+
 #canvas {
     display: block;
     z-index: -1;
